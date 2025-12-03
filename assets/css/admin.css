@@ -1,0 +1,6 @@
+/* Admin sidebar styling */
+.admin-sidebar .nav-link { color: rgba(255,255,255,0.9); border-radius:6px; padding:10px; }
+.admin-sidebar .nav-link:hover { background: rgba(255,255,255,0.04); text-decoration:none; color:#fff; }
+.admin-content { margin-left: 280px; padding: 30px; }
+/* small responsive fix */
+@media (max-width: 991px) { .admin-sidebar { position:relative; width:100%; min-height:auto; } .admin-content{ margin-left:0; } }
