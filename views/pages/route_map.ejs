@@ -1,0 +1,57 @@
+<%- include('../partials/header') %>
+
+    <div class="container my-5">
+        <h1 class="text-center mb-5 fw-bold text-primary"><i class="fas fa-map-marked-alt me-2"></i> Route Map &
+            Schedule</h1>
+
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle">
+                        <thead class="bg-dark text-white">
+                            <tr>
+                                <th>Train Code</th>
+                                <th>Station From</th>
+                                <th>Station To</th>
+                                <th>Departure</th>
+                                <th>Arrival</th>
+                                <th>Fare (Snigdha)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (routes.length> 0) { %>
+                                <% routes.forEach(route=> { %>
+                                    <tr>
+                                        <td><span class="badge bg-secondary">
+                                                <%= route.train_code %>
+                                            </span></td>
+                                        <td class="fw-bold">
+                                            <%= route.from_station %>
+                                        </td>
+                                        <td class="fw-bold">
+                                            <%= route.to_station %>
+                                        </td>
+                                        <td>
+                                            <%= route.departure_time %>
+                                        </td>
+                                        <td>
+                                            <%= route.arrival_time %>
+                                        </td>
+                                        <td>৳ <%= route.fare_snigdha %>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="6" class="text-center text-muted">No routes available right
+                                                    now.</td>
+                                            </tr>
+                                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>

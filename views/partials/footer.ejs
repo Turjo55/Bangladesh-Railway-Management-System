@@ -1,0 +1,54 @@
+<!-- Footer -->
+<footer class="bg-dark text-white pt-5 pb-3 mt-5">
+    <div class="container text-center text-md-start">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <h5 class="text-success"><i class="fas fa-train me-2"></i>Bangladesh Railway</h5>
+                <p class="text-muted">Serving the nation with pride since 1862. Connect with us for a safe and
+                    comfortable journey.</p>
+            </div>
+            <div class="col-md-2 mb-3">
+                <h6>Quick Links</h6>
+                <ul class="list-unstyled">
+                    <li><a href="/about" class="text-white-50">About Us</a></li>
+                    <li><a href="/route_map" class="text-white-50">Route Map</a></li>
+                    <li><a href="/terms" class="text-white-50">Terms</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-3">
+                <h6>Support</h6>
+                <ul class="list-unstyled">
+                    <li><a href="/faq" class="text-white-50">FAQ</a></li>
+                    <li><a href="/refund_policy" class="text-white-50">Refund Policy</a></li>
+                    <li><a href="/contact" class="text-white-50">Contact Support</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-3">
+                <h6>Contact</h6>
+                <p class="text-white-50"><i class="fas fa-phone me-2"></i> 16247 (Hotline)</p>
+                <p class="text-white-50"><i class="fas fa-envelope me-2"></i> support@railway.gov.bd</p>
+            </div>
+        </div>
+        <hr class="bg-secondary">
+        <div class="text-center text-muted small">
+            &copy; 2025 Bangladesh Railway. All Rights Reserved.
+        </div>
+    </div>
+</footer>
+
+<!-- MDB JS -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
+<!-- Theme JS -->
+<script src="/js/theme.js"></script>
+<script>
+    // Ensure dropdowns work even if auto-init fails
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        const dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+            return new mdb.Dropdown(dropdownToggleEl);
+        });
+    });
+</script>
+</body>
+
+</html>

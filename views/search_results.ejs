@@ -1,0 +1,79 @@
+<%- include('partials/header') %>
+
+    <div class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary fw-bold">Available Trains</h2>
+            <div class="text-muted">
+                Search: <%= searchParams.from %> to <%= searchParams.to %> on <%= searchParams.date %>
+            </div>
+        </div>
+
+        <% if (results.length> 0) { %>
+            <% results.forEach(train=> { %>
+                <div class="card shadow-sm mb-4 border-0 hover-shadow">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 text-center text-md-start">
+                                <h4 class="mb-0 text-success fw-bold">
+                                    <%= train.train_name %>
+                                </h4>
+                                <span class="badge bg-secondary">
+                                    <%= train.train_code %>
+                                </span>
+                                <div class="small text-muted mt-1">
+                                    <%= train.train_type %>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 text-center">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div>
+                                        <div class="h5 mb-0">
+                                            <%= train.departure_time %>
+                                        </div>
+                                        <div class="small text-muted">
+                                            <%= train.from_station %>
+                                        </div>
+                                    </div>
+                                    <div class="px-3 text-muted">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </div>
+                                    <div>
+                                        <div class="h5 mb-0">
+                                            <%= train.arrival_time %>
+                                        </div>
+                                        <div class="small text-muted">
+                                            <%= train.to_station %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="d-flex flex-wrap justify-content-center gap-2">
+                                    <span class="badge bg-light text-dark border">AC_B: ৳<%= train.fare_ac_b %></span>
+                                    <span class="badge bg-light text-dark border">Snigdha: ৳<%= train.fare_snigdha %>
+                                            </span>
+                                    <span class="badge bg-light text-dark border">Shovan: ৳<%= train.fare_shovan %>
+                                            </span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 text-end">
+                                <a href="/booking/seat_selection?route_id=<%= train._id %>&date=<%= searchParams.date %>"
+                                    class="btn btn-secondary btn-sm">Select Seat</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% }) %>
+                    <% } else { %>
+                        <div class="alert alert-warning text-center">
+                            <h4><i class="fas fa-exclamation-triangle me-2"></i> No Trains Found</h4>
+                            <p>We couldn't find any direct trains for this route on the selected date.</p>
+                            <a href="/" class="btn btn-outline-dark mt-2">Modify Search</a>
+                        </div>
+                        <% } %>
+    </div>
+
+    <%- include('partials/footer') %>

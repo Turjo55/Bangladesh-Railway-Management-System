@@ -1,0 +1,164 @@
+<%- include('partials/header') %>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-lg mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="fas fa-couch me-2"></i> Select Seats - <%= train.name %>
+                        </h4>
+                        <small>
+                            <%= route.from_station %> to <%= route.to_station %> (<%= date %>)
+                        </small>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-4">
+                            <div class="d-flex align-items-center">
+                                <div class="seat available me-2"></div> Available
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="seat selected me-2"></div> Selected
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="seat booked me-2"></div> Booked
+                            </div>
+                        </div>
+
+                        <div class="seat-map-container text-center">
+                            <div class="row justify-content-center">
+                                <% ['A','B','C','D','E','F','G','H','I','J'].forEach(row=> { %>
+                                    <div class="col-12 mb-2">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <% [1,2,3,4].forEach(col=> { %>
+                                                <% const seatNum=row + '-' + col; %>
+                                                    <button class="btn btn-outline-secondary seat-btn"
+                                                        data-seat="<%= seatNum %>" onclick="toggleSeat(this)">
+                                                        <%= seatNum %>
+                                                    </button>
+                                                    <% if(col==2) { %>
+                                                        <div class="mx-3"></div>
+                                                        <% } %>
+                                                            <% }) %>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-lg">
+                    <div class="card-body">
+                        <h5 class="card-title text-success mb-3">Booking Details</h5>
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Train
+                                <span class="fw-bold">
+                                    <%= train.name %>
+                                </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Type
+                                <span class="badge bg-secondary">
+                                    <%= train.type %>
+                                </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Class
+                                <span>Snigdha</span>
+                            </li>
+                        </ul>
+
+                        <div class="mb-3">
+                            <label class="fw-bold">Selected Seats:</label>
+                            <div id="selected-seats-display" class="text-primary">None</div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <span class="h5 mb-0">Total</span>
+                            <span class="h4 text-success mb-0">৳ <span id="total-price">0</span></span>
+                        </div>
+
+                        <form action="/booking/summary" method="GET" id="booking-form">
+                            <input type="hidden" name="route_id" value="<%= route._id %>">
+                            <input type="hidden" name="date" value="<%= date %>">
+                            <input type="hidden" name="seats" id="seats-input">
+                            <input type="hidden" name="fare" id="fare-input">
+                            <button type="submit" class="btn btn-success w-100 btn-lg" id="proceed-btn" disabled>Proceed
+                                to Book</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .seat-btn {
+            width: 50px;
+            height: 40px;
+            font-size: 0.8rem;
+            padding: 0;
+        }
+
+        .seat {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .seat.available {
+            background-color: white;
+        }
+
+        .seat.selected {
+            background-color: #198754;
+            border-color: #198754;
+        }
+
+        .seat.booked {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+    </style>
+
+    <script>
+        const selectedSeats = new Set();
+        const farePerSeat = 600; // Mock fare for Snigdha
+
+        function toggleSeat(btn) {
+            const seat = btn.dataset.seat;
+            if (selectedSeats.has(seat)) {
+                selectedSeats.delete(seat);
+                btn.classList.remove('btn-success', 'text-white');
+                btn.classList.add('btn-outline-secondary');
+            } else {
+                if (selectedSeats.size >= 4) {
+                    alert("You can select maximum 4 seats.");
+                    return;
+                }
+                selectedSeats.add(seat);
+                btn.classList.remove('btn-outline-secondary');
+                btn.classList.add('btn-success', 'text-white');
+            }
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const seatsArr = Array.from(selectedSeats).sort();
+            const total = seatsArr.length * farePerSeat;
+
+            document.getElementById('selected-seats-display').textContent = seatsArr.length ? seatsArr.join(', ') : 'None';
+            document.getElementById('total-price').textContent = total;
+
+            document.getElementById('seats-input').value = seatsArr.join(',');
+            document.getElementById('fare-input').value = total;
+
+            document.getElementById('proceed-btn').disabled = seatsArr.length === 0;
+        }
+    </script>
+
+    <%- include('partials/footer') %>

@@ -12,10 +12,12 @@ include 'includes/header.php';
 
 // Fetch stations for the search form
 $stations = [];
-$result = $conn->query("SELECT name FROM stations ORDER BY name ASC");
-if ($result && $result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $stations[] = htmlspecialchars($row['name']);
+$db = getMongoDB();
+$cursor = $db->stations->find([], ['sort' => ['name' => 1]]);
+
+foreach ($cursor as $document) {
+    if (isset($document['name'])) {
+        $stations[] = htmlspecialchars($document['name']);
     }
 }
 ?>

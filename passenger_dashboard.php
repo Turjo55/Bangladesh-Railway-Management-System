@@ -12,14 +12,26 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $currentUserId = $_SESSION['user_id']; // For actual fetching
-$passengerName = "Rahim Ahmed"; // Placeholder
+$passengerName = $_SESSION['user_name'] ?? 'Passenger'; 
 
-// Sample bookings data (To be replaced by DB fetch)
-$bookings = [
-    ['pnr' => 'BRTICKET12345', 'train' => 'Suborno Express', 'route' => 'DKA to CTG', 'date' => '2025-12-10', 'status' => 'Upcoming', 'fare' => 2100],
-    ['pnr' => 'BRTICKET98765', 'train' => 'Turna Express', 'route' => 'CTG to DKA', 'date' => '2025-11-15', 'status' => 'Completed', 'fare' => 1800],
-    ['pnr' => 'BRTICKET00112', 'train' => 'Mahanagar', 'route' => 'DKA to SYL', 'date' => '2025-09-01', 'status' => 'Cancelled', 'fare' => 1500],
-];
+// Fetch user's bookings
+$db = getMongoDB();
+$bookingsCursor = $db->bookings->find(
+    ['user_id' => $currentUserId],
+    ['sort' => ['created_at' => -1]]
+);
+
+$bookings = [];
+foreach ($bookingsCursor as $b) {
+    $bookings[] = [
+        'pnr' => $b['pnr'],
+        'train' => $b['train_name'],
+        'route' => $b['from_station'] . ' to ' . $b['to_station'],
+        'date' => $b['journey_date'],
+        'status' => $b['status'] ?? 'Upcoming', // 'Upcoming', 'Completed', 'Cancelled'
+        'fare' => $b['total_amount']
+    ];
+}
 
 ?>
 

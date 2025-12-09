@@ -1,12 +1,16 @@
 <?php
-define('IS_ADMIN', true);
-$pageTitle = "Train & Route Manager";
+// Admin/train_route_mgr.php
+// # CRUD Interface for managing Trains and Routes
 
-require_once __DIR__ . '/../includes/db_connect.php';
+define('IS_ADMIN', true);
+$pageTitle = "Train & Route Management";
+
+// Use the correct path for files located one level deeper (in the Admin folder)
+require_once __DIR__ . '/../includes/db_connect.php'; 
 include __DIR__ . '/../includes/header.php';
 include __DIR__ . '/../includes/admin_sidebar.php';
 ?>
-<div class="admin-content">
+<div class="admin-content" style="margin-left: 260px;">
   <h2 class="mb-3">Train & Route Manager</h2>
 
   <?php if (isset($conn)): ?>

@@ -5,9 +5,24 @@ $pageTitle = "Ticket Confirmed";
 include 'includes/config.php';
 include 'includes/header.php'; 
 
-$pnr = $_GET['pnr'] ?? 'BRTICKET12345';
-$totalFare = 2100.00;
-$seats = 'A-1, B-2, C-3';
+$pnr = $_GET['pnr'] ?? '';
+
+if (empty($pnr)) {
+    die("Invalid Ticket Request.");
+}
+
+$db = getMongoDB();
+$booking = $db->bookings->findOne(['pnr' => $pnr]);
+
+if (!$booking) {
+    die("Ticket not found.");
+}
+
+$totalFare = $booking['total_amount'];
+$seats = $booking['seats'];
+$date = $booking['journey_date'];
+$trainName = $booking['train_name'] . ' (' . $booking['train_code'] . ')';
+$route = $booking['from_station'] . ' to ' . $booking['to_station'];
 ?>
 
 <div class="row justify-content-center my-5">
@@ -39,9 +54,9 @@ $seats = 'A-1, B-2, C-3';
             <h5 class="mt-4">Journey Details</h5>
             <table class="table table-bordered table-striped">
                 <tbody>
-                    <tr><th>Train Name:</th><td>Suborno Express (701)</td></tr>
-                    <tr><th>Route:</th><td>Dhaka (Kamalapur) to Chattogram</td></tr>
-                    <tr><th>Journey Date/Time:</th><td><?php echo date('Y-m-d'); ?> @ 07:40 AM</td></tr>
+                    <tr><th>Train Name:</th><td><?php echo htmlspecialchars($trainName); ?></td></tr>
+                    <tr><th>Route:</th><td><?php echo htmlspecialchars($route); ?></td></tr>
+                    <tr><th>Journey Date:</th><td><?php echo htmlspecialchars($date); ?></td></tr>
                     <tr><th>Booked Seats:</th><td><span class="fw-bold text-primary"><?php echo htmlspecialchars($seats); ?></span></td></tr>
                 </tbody>
             </table>

@@ -3,6 +3,7 @@
 $pageTitle = "Login/Signup";
 if (session_status() === PHP_SESSION_NONE) session_start();
 include 'includes/header.php'; 
+require_once 'includes/config.php'; // Ensure MongoDB config is loaded
 
 $loginError = '';
 
@@ -11,21 +12,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loginId'])) {
     $loginId = trim($_POST['loginId']);
     $loginPassword = trim($_POST['loginPassword']);
     
-    // Admin login
-    if ($loginId == 'admin@br.gov.bd' && $loginPassword == 'admin123') {
-        $_SESSION['user_id'] = 2; 
-        $_SESSION['user_role'] = 'Super Admin';
-        header("Location: admin/train_route_mgr.php");
-        exit;
-    } 
-    // Passenger login
-    elseif ($loginId == 'Tanvir@example.com' && $loginPassword == 'password123') {
-        $_SESSION['user_id'] = 1; 
-        $_SESSION['user_role'] = 'Passenger';
-        header("Location: passenger_dashboard.php");
-        exit;
+    $db = getMongoDB();
+    $usersCollection = $db->users;
+
+    // Find user by email or phone
+    $user = $usersCollection->findOne([
+        '$or' => [
+            ['email' => $loginId],
+            ['phone' => $loginId]
+        ]
+    ]);
+
+    if ($user) {
+        // Verify password (assuming hashed, but for now matching plain text if that was the legacy or verify hash)
+        // Check if password_verify should be used. The legacy code used plain text 'password123'. 
+        // We will try both: plain text (transition) or verify.
+        // For new system, we should assume password_verify.
+        
+        $passwordValid = false;
+        if (password_verify($loginPassword, $user['password'])) {
+            $passwordValid = true;
+        } elseif ($user['password'] === $loginPassword) { 
+             // Temporary fallback for legacy helper users or if hash migration isn't done
+             $passwordValid = true;
+        }
+
+        if ($passwordValid) {
+            $_SESSION['user_id'] = (string)$user['_id'];
+            $_SESSION['user_role'] = $user['role'];
+            $_SESSION['user_name'] = $user['name']; // Useful for display
+
+            if ($user['role'] === 'Super Admin') {
+                header("Location: admin/train_route_mgr.php");
+            } else {
+                header("Location: passenger_dashboard.php");
+            }
+            exit;
+        } else {
+            $loginError = "Invalid password.";
+        }
     } else {
-        $loginError = "Invalid email or password. Try: Tanvir@example.com / password123";
+         // Fallback for hardcoded admin if not in DB yet (Development safety)
+          if ($loginId == 'admin@br.gov.bd' && $loginPassword == 'admin123') {
+            $_SESSION['user_id'] = 'admin_legacy'; 
+            $_SESSION['user_role'] = 'Super Admin';
+            header("Location: admin/train_route_mgr.php");
+            exit;
+        }
+        $loginError = "User not found. Please register.";
     }
 }
 ?>

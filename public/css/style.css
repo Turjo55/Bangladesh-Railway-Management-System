@@ -1,0 +1,80 @@
+/* assets/css/style.css */
+/* # Custom Styles for Bangladesh Railway System (Material UI, Dark/Light Mode) */
+
+/* Background Color: A professional, non-distracting light blue/grey */
+:root {
+    --primary-color: #2c3e50; /* Dark Blue for professional look */
+    --secondary-color: #f1c40f; /* Yellow/Gold accent for Bangladesh Railway feel */
+    --background-color: #ecf0f1; /* Light Grey background for cleanliness */
+    --card-background: #ffffff;
+    --text-color: #34495e;
+}
+
+/* Dark Mode Variables */
+.dark-mode {
+    --background-color: #2c3e50;
+    --card-background: #34495e;
+    --text-color: #ecf0f1;
+}
+
+/* Apply base background color and font */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Roboto', sans-serif; 
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* # Logo Watermark / Branding on all pages */
+body::after {
+    content: "";
+    background-image: url('../img/logo_placeholder.png'); /* # REPLACE THIS WITH YOUR BANGLADESH RAILWAY LOGO IMAGE */
+    background-repeat: no-repeat;
+    background-position: bottom right;
+    background-size: 150px;
+    opacity: 0.1;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    width: 150px;
+    height: 150px;
+    z-index: -1; 
+}
+
+/* Customizing MDB/Bootstrap components for Material look */
+.navbar {
+    background-color: var(--primary-color) !important;
+    box-shadow: 0 4px 6px -6px #222;
+}
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    transition: all 0.3s;
+}
+.card {
+    background-color: var(--card-background);
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease-in-out;
+}
+.search-form-container {
+    background-color: var(--card-background);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Admin Dashboard Styling - Background Image */
+.admin-dashboard-bg {
+    /* # REPLACE THE URL WITH YOUR DESIRED BANGLADESH RAILWAY ENGINE/COACH IMAGE */
+    background: url('../img/engine_bg.jpg') no-repeat center center fixed; 
+    background-size: cover;
+    min-height: 100vh;
+}
+.admin-card-overlay {
+    background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent white for readability */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    min-height: calc(100vh - 40px);
+}

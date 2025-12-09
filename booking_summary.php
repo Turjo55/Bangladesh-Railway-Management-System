@@ -6,15 +6,30 @@ include 'includes/config.php';
 include 'includes/header.php'; 
 
 // # Fetch URL parameters
-$trainId = $_GET['train_id'] ?? 1;
+$routeId = $_GET['route_id'] ?? null;
 $journeyDate = $_GET['date'] ?? date('Y-m-d');
-$seatsSelected = $_GET['seats'] ?? 'A-1,B-2'; 
-$totalFare = (float)($_GET['fare'] ?? 2100.00); 
+$seatsSelected = $_GET['seats'] ?? ''; 
+$totalFare = (float)($_GET['fare'] ?? 0); 
+
+if (!$routeId) {
+    die("Invalid Route Information");
+}
+
+$db = getMongoDB();
+try {
+   $routeDoc = $db->routes->findOne(['_id' => new MongoDB\BSON\ObjectId($routeId)]);
+} catch(Exception $e) { $routeDoc = null; }
+
+if (!$routeDoc) {
+    die("Route details not found.");
+}
+
+$train = $db->trains->findOne(['code' => $routeDoc['train_code']]);
 
 // # Sample data fetch (Replace with actual DB lookup based on trainId)
-$trainName = "Suborno Express (701)";
-$route = "Dhaka to Chattogram";
-$passengerName = "Rahim Ahmed"; // Placeholder from session/DB
+$trainName = $train['name'] . " (" . $train['code'] . ")";
+$route = $routeDoc['from_station'] . " to " . $routeDoc['to_station'];
+$passengerName = $_SESSION['user_name'] ?? "Guest User"; // Fetch from session
 
 // Calculate charges
 $seatFare = $totalFare / 1.05; // Reverse calculate base fare (assuming 5% charge)
@@ -97,21 +112,39 @@ $serviceCharge = $totalFare - $seatFare;
 
 <script>
 // # JAVASCRIPT FOR PAYMENT SIMULATION
+// # JAVASCRIPT FOR PAYMENT SIMULATION & BOOKING SUBMISSION
 function simulatePayment(gateway) {
     const statusDiv = document.getElementById('payment-status');
-    statusDiv.innerHTML = `<div class="alert alert-info"><i class="fas fa-spinner fa-spin me-2"></i> Redirecting to ${gateway} gateway...</div>`;
+    statusDiv.innerHTML = `<div class="alert alert-info"><i class="fas fa-spinner fa-spin me-2"></i> Processing Payment via ${gateway}...</div>`;
     
-    // Simulate API call delay
+    // Simulate API call delay then Submit to Backend
     setTimeout(() => {
-        // Assume successful payment for demonstration
-        statusDiv.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i> Payment via ${gateway} Successful! Redirecting to ticket page...</div>`;
+        statusDiv.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i> Payment Successful! Generating Ticket...</div>`;
         
-        // Redirect to a placeholder ticket page
-        setTimeout(() => {
-            window.location.href = `ticket_confirmation.php?pnr=BRTICKET${Math.floor(Math.random() * 90000 + 10000)}`;
-        }, 2000);
+        // POST to process_booking.php
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'process_booking.php';
+
+        const fields = {
+            'route_id': '<?php echo $routeId; ?>',
+            'date': '<?php echo $journeyDate; ?>',
+            'seats': '<?php echo $seatsSelected; ?>',
+            'amount': '<?php echo $totalFare; ?>',
+            'gateway': gateway // Pass the gateway name
+        };
+
+        for (const key in fields) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = fields[key];
+            form.appendChild(input);
+        }
+        document.body.appendChild(form);
+        form.submit();
         
-    }, 3000); // 3 second delay
+    }, 2000); 
 }
 </script>
 

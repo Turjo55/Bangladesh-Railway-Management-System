@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-white sidebar collapse shadow-sm">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a class="nav-link" href="/admin/dashboard"><i
+                                    class="fas fa-home me-2"></i> Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/admin/bookings"><i
+                                    class="fas fa-ticket-alt me-2"></i> Booking Manager</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/admin/routes"><i class="fas fa-route me-2"></i>
+                                Train Route Manager</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/admin/users"><i class="fas fa-users me-2"></i>
+                                User Manager</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="/admin/reports"><i
+                                    class="fas fa-chart-line me-2"></i> Reports</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/admin/settings"><i class="fas fa-cog me-2"></i>
+                                Settings</a></li>
+                    </ul>
+                </div>
+            </nav>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 my-4">
+                <h2 class="mb-4">Reports</h2>
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <p class="text-muted">View system reports and analytics.</p>
+                        <div class="alert alert-info">Real-time data visualization coming soon.</div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <%- include('../partials/footer') %>

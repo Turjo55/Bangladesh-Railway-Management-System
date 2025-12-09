@@ -1,44 +1,51 @@
-<?php
+<?php 
+// Admin/settings.php
+// # Configuration settings for the Railway System
+
 define('IS_ADMIN', true);
 $pageTitle = "System Settings";
 
-require_once __DIR__ . '/../includes/db_connect.php';
-include __DIR__ . '/../includes/header.php';
-include __DIR__ . '/../includes/admin_sidebar.php';
+// IMPORTANT: Use the correct path for files located one level deeper (in the Admin folder)
+require_once __DIR__ . '/../includes/config.php'; 
+include __DIR__ . '/../includes/header.php'; 
+include __DIR__ . '/../includes/admin_sidebar.php'; 
 ?>
-<div class="admin-content">
-  <h2 class="mb-3">System Settings</h2>
 
-  <?php if (isset($conn)): ?>
-    <?php
-      $settings = [];
-      $res = $conn->query("SELECT name, value FROM settings");
-      if ($res && $res->num_rows) {
-        while($s = $res->fetch_assoc()) $settings[$s['name']] = $s['value'];
-      }
-    ?>
-    <form method="post" action="settings_save.php" class="row g-3">
-      <div class="col-md-6">
-        <label class="form-label">Site Title</label>
-        <input name="site_title" class="form-control" value="<?php echo htmlspecialchars($settings['site_title'] ?? 'Bangladesh Railway'); ?>">
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">Contact Email</label>
-        <input name="contact_email" class="form-control" value="<?php echo htmlspecialchars($settings['contact_email'] ?? ''); ?>">
-      </div>
-      <div class="col-12 text-end">
-        <button class="btn btn-primary">Save Settings</button>
-      </div>
-    </form>
-
-    <?php if (empty($res) || $res->num_rows == 0): ?>
-      <div class="alert alert-info mt-3">No settings found. Create settings table if needed:
-      <pre class="small bg-light p-2">CREATE TABLE settings (name VARCHAR(100) PRIMARY KEY, value TEXT);</pre>
-      </div>
-    <?php endif; ?>
-
-  <?php else: ?>
-    <div class="alert alert-warning">DB connection not available.</div>
-  <?php endif; ?>
+<div class="admin-content container-fluid pt-4" style="margin-left: 260px;">
+    <h2><?php echo $pageTitle; ?></h2>
+    <p class="text-muted">Configure base fares, classes, and system parameters.</p>
+    
+    <div class="card p-4 shadow-sm mb-4">
+        <h4 class="card-title text-secondary">Fare Multiplier Settings</h4>
+        <p class="text-muted small">Manage the base fare multiplier for each class type.</p>
+        <form action="process_settings.php" method="POST">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="ac_berth">AC Berth Multiplier</label>
+                    <input type="number" step="0.01" class="form-control" id="ac_berth" name="ac_berth_multiplier" value="2.00" required>
+                </div>
+                 <div class="col-md-4 mb-3">
+                    <label for="snigdha">Snigdha Multiplier</label>
+                    <input type="number" step="0.01" class="form-control" id="snigdha" name="snigdha_multiplier" value="1.50" required>
+                </div>
+                 <div class="col-md-4 mb-3">
+                    <label for="shovan">Shovan Chair Multiplier</label>
+                    <input type="number" step="0.01" class="form-control" id="shovan" name="shovan_multiplier" value="1.00" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3"><i class="fas fa-save me-2"></i> Save Fare Settings</button>
+        </form>
+    </div>
+    
+    <div class="card p-4 shadow-sm">
+        <h4 class="card-title text-secondary">System Announcements</h4>
+        <p class="text-muted small">Post system-wide messages (e.g., service alerts).</p>
+        <textarea class="form-control" rows="3" placeholder="Enter maintenance alerts or system messages..."></textarea>
+        <button class="btn btn-warning mt-3"><i class="fas fa-bullhorn me-2"></i> Post Announcement</button>
+    </div>
+    
 </div>
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+
+<?php 
+include __DIR__ . '/../includes/footer.php'; 
+?>

@@ -1,0 +1,61 @@
+<%- include('partials/header') %>
+
+    <!-- Hero Section -->
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-3 fw-bold mb-3">Welcome to Bangladesh Railway</h1>
+            <p class="lead mb-4">Safe, Comfortable, and Affordable Journeys Across the Nation</p>
+
+            <!-- Search Widget -->
+            <div class="card p-4 mx-auto shadow-lg" style="max-width: 900px; background: rgba(255,255,255,0.95);">
+                <form action="/search_results" method="GET">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-dark text-start d-block">From</label>
+                            <select class="form-select" name="from" required>
+                                <option value="" selected disabled>Select Station</option>
+                                <% stations.forEach(station=> { %>
+                                    <option value="<%= station %>">
+                                        <%= station %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-dark text-start d-block">To</label>
+                            <select class="form-select" name="to" required>
+                                <option value="" selected disabled>Select Station</option>
+                                <% stations.forEach(station=> { %>
+                                    <option value="<%= station %>">
+                                        <%= station %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-dark text-start d-block">Date</label>
+                            <input type="date" class="form-control" name="date" required
+                                value="<%= new Date().toISOString().split('T')[0] %>">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-dark text-start d-block">Class</label>
+                            <select class="form-select" name="class_type">
+                                <option value="AC_B">AC Berth</option>
+                                <option value="Snigdha">Snigdha (AC)</option>
+                                <option value="Shovan">Shovan Chair</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow-sm">
+                                <i class="fas fa-search me-2"></i> Find Trains
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

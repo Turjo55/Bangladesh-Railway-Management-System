@@ -11,37 +11,53 @@ $to = $_GET['toStation'] ?? 'Chattogram';
 $date = $_GET['journeyDate'] ?? date('Y-m-d');
 $class = $_GET['travelClass'] ?? 'All';
 
-// # Query to fetch trains (Highly simplified, needs complex joins for full functionality)
-$sql = "
-SELECT 
-    t.train_id, t.train_code, t.name, t.type, t.running_days, 
-    t.departure_time, t.arrival_time,
-    GROUP_CONCAT(c.class_type, ':', c.base_fare SEPARATOR ';') AS fares_data
-FROM trains t
-LEFT JOIN coaches c ON t.train_id = c.train_id
-GROUP BY t.train_id
-ORDER BY t.departure_time ASC
-";
-$result = $conn->query($sql);
+// # Query to fetch trains (Using MongoDB)
+// Fetch routes matching origin/dest
+$db = getMongoDB();
+$routesCursor = $db->routes->find([
+    'from_station' => $from,
+    'to_station' => $to
+]);
+
 $availableTrains = [];
-if ($result && $result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $train = $row;
-        $train['classes'] = [];
-        // Parse fares data string (e.g., "AC_B:1200.00;Snigdha:850.00")
-        foreach (explode(';', $row['fares_data']) as $farePair) {
-            list($classCode, $price) = explode(':', $farePair);
-            $train['classes'][$classCode] = (int)$price;
-            // # Availability Placeholder: Needs DB lookup in real system
-            $train['availability'][$classCode] = rand(0, 80); 
+
+foreach ($routesCursor as $route) {
+    // Fetch train details for this route
+    $trainCode = $route['train_code'];
+    $train = $db->trains->findOne(['code' => $trainCode]);
+
+    if ($train) {
+        $trainData = [
+            'train_id' => (string)$train['_id'], // Use MongoID as ID
+            'route_id' => (string)$route['_id'], // Add Route ID
+            'train_code' => $train['code'],
+            'name' => $train['name'],
+            'type' => $train['type'],
+            'running_days' => 'Daily', // Placeholder as it wasn't in seeder clearly
+            'departure_time' => $route['departure_time'],
+            'arrival_time' => $route['arrival_time'],
+            'duration' => '', // Calculate below
+            'classes' => [],
+            'availability' => []
+        ];
+
+        // Map fares from route to classes array
+        if (isset($route['fare_ac_b'])) $trainData['classes']['AC_B'] = $route['fare_ac_b'];
+        if (isset($route['fare_snigdha'])) $trainData['classes']['Snigdha'] = $route['fare_snigdha'];
+        if (isset($route['fare_shovan'])) $trainData['classes']['Shovan'] = $route['fare_shovan'];
+
+        // Availability Placeholder
+        foreach ($trainData['classes'] as $cls => $price) {
+            $trainData['availability'][$cls] = rand(5, 50);
         }
-        // # Calculate duration (Simple subtraction is inaccurate across midnight, but okay for mock)
-        $dep = strtotime($row['departure_time']);
-        $arr = strtotime($row['arrival_time']);
+
+        // Calculate Duration
+        $dep = strtotime($route['departure_time']);
+        $arr = strtotime($route['arrival_time']);
         $diff = abs($arr - $dep);
-        $train['duration'] = floor($diff / 3600) . 'h ' . floor(($diff % 3600) / 60) . 'm';
-        
-        $availableTrains[] = $train;
+        $trainData['duration'] = floor($diff / 3600) . 'h ' . floor(($diff % 3600) / 60) . 'm';
+
+        $availableTrains[] = $trainData;
     }
 }
 
@@ -120,7 +136,7 @@ function getClassFullName($code) {
                             </div>
 
                             <div class="col-md-2 text-end">
-                                <a href="seat_selection.php?train_id=<?php echo $train['train_id']; ?>&date=<?php echo htmlspecialchars($date); ?>" class="btn btn-secondary btn-sm">Select Seat</a>
+                                <a href="seat_selection.php?route_id=<?php echo $train['route_id']; ?>&date=<?php echo htmlspecialchars($date); ?>" class="btn btn-secondary btn-sm">Select Seat</a>
                             </div>
                         </div>
                     </div>

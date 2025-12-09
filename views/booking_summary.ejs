@@ -1,0 +1,74 @@
+<%- include('partials/header') %>
+
+    <div class="container my-5">
+        <h2 class="text-primary mb-4">Finalize Your Booking</h2>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card p-4 mb-4 shadow-sm">
+                    <h4 class="card-title text-secondary">Journey Details</h4>
+                    <hr>
+                    <dl class="row">
+                        <dt class="col-sm-4 text-muted">Train:</dt>
+                        <dd class="col-sm-8 fw-bold text-primary">
+                            <%= train.name %> (<%= train.code %>)
+                        </dd>
+
+                        <dt class="col-sm-4 text-muted">Route:</dt>
+                        <dd class="col-sm-8">
+                            <%= route.from_station %> to <%= route.to_station %>
+                        </dd>
+
+                        <dt class="col-sm-4 text-muted">Date:</dt>
+                        <dd class="col-sm-8">
+                            <%= date %>
+                        </dd>
+
+                        <dt class="col-sm-4 text-muted">Seats:</dt>
+                        <dd class="col-sm-8 text-success fw-bold">
+                            <%= seats %>
+                        </dd>
+                    </dl>
+
+                    <h4 class="card-title text-secondary mt-4">Fare Breakdown</h4>
+                    <hr>
+                    <dl class="row">
+                        <dt class="col-sm-6">Total Payable:</dt>
+                        <dd class="col-sm-6 text-end fs-5 fw-bold text-primary">৳ <%= totalFare %>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card p-4 mb-4 shadow-sm">
+                    <h4 class="card-title text-secondary">Make Payment</h4>
+                    <p class="text-muted">Total amount: <strong class="text-primary">৳ <%= totalFare %></strong></p>
+
+                    <form action="/booking/process" method="POST" id="payment-form">
+                        <input type="hidden" name="route_id" value="<%= route._id %>">
+                        <input type="hidden" name="date" value="<%= date %>">
+                        <input type="hidden" name="seats" value="<%= seats %>">
+                        <input type="hidden" name="amount" value="<%= totalFare %>">
+
+                        <div class="d-grid gap-3">
+                            <button type="submit" name="gateway" value="bKash"
+                                class="btn btn-outline-danger btn-lg text-start">
+                                <i class="fas fa-wallet me-2"></i> Pay with bKash
+                            </button>
+                            <button type="submit" name="gateway" value="Nagad"
+                                class="btn btn-outline-warning btn-lg text-start">
+                                <i class="fas fa-wallet me-2"></i> Pay with Nagad
+                            </button>
+                            <button type="submit" name="gateway" value="Card"
+                                class="btn btn-outline-primary btn-lg text-start">
+                                <i class="fas fa-credit-card me-2"></i> Pay with Card
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

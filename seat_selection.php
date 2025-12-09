@@ -6,56 +6,62 @@ include 'includes/config.php';
 include 'includes/header.php'; 
 
 // # Get Train ID from URL
-$trainId = $_GET['train_id'] ?? 1;
+// # Get parameters
+$routeId = $_GET['route_id'] ?? null;
 $journeyDate = $_GET['date'] ?? date('Y-m-d');
 
-// # Fetch Train Details from DB
+if (!$routeId) {
+    die("Invalid Route ID");
+}
+
+$db = getMongoDB();
+
+// # Fetch Route Details
+try {
+    $route = $db->routes->findOne(['_id' => new MongoDB\BSON\ObjectId($routeId)]);
+} catch (Exception $e) {
+    $route = null;
+}
+
+if (!$route) {
+    die("Route not found");
+}
+
+// # Fetch Train Details
+$train = $db->trains->findOne(['code' => $route['train_code']]);
+
 $trainDetails = [];
-$sqlTrain = "SELECT t.train_code, t.name, t.departure_time, t.arrival_time, s1.name AS dep_station, s2.name AS arr_station
-             FROM trains t 
-             JOIN stations s1 ON t.departure_station_id = s1.station_id 
-             JOIN stations s2 ON t.arrival_station_id = s2.station_id 
-             WHERE t.train_id = ?";
-$stmtTrain = $conn->prepare($sqlTrain);
-$stmtTrain->bind_param("i", $trainId);
-$stmtTrain->execute();
-$resultTrain = $stmtTrain->get_result();
-if ($resultTrain->num_rows > 0) {
-    $trainData = $resultTrain->fetch_assoc();
-    $trainDetails['name'] = $trainData['name'];
-    $trainDetails['code'] = $trainData['train_code'];
-    $trainDetails['route'] = $trainData['dep_station'] . ' to ' . $trainData['arr_station'];
-    $trainDetails['departure_time'] = date('H:i', strtotime($trainData['departure_time']));
-    $trainDetails['arrival_time'] = date('H:i', strtotime($trainData['arrival_time']));
+if ($train) {
+    $trainDetails['name'] = $train['name'];
+    $trainDetails['code'] = $train['code'];
+    $trainDetails['route'] = $route['from_station'] . ' to ' . $route['to_station'];
+    $trainDetails['departure_time'] = $route['departure_time'];
+    $trainDetails['arrival_time'] = $route['arrival_time'];
     
-    // Duration Calculation (Simple mock again)
-    $dep = strtotime($trainData['departure_time']);
-    $arr = strtotime($trainData['arrival_time']);
+    // Duration
+    $dep = strtotime($route['departure_time']);
+    $arr = strtotime($route['arrival_time']);
     $diff = abs($arr - $dep);
     $trainDetails['duration'] = floor($diff / 3600) . 'h ' . floor(($diff % 3600) / 60) . 'm';
 } else {
-    // Handle error if train not found
-    echo "<div class='alert alert-danger'>Train details not found.</div>";
-    include 'includes/footer.php';
-    exit;
+   die("Train details missing");
 }
 
-// Fetch Coaches and Fares
-$sqlCoaches = "SELECT coach_name, class_type, total_seats, base_fare FROM coaches WHERE train_id = ?";
-$stmtCoaches = $conn->prepare($sqlCoaches);
-$stmtCoaches->bind_param("i", $trainId);
-$stmtCoaches->execute();
-$resultCoaches = $stmtCoaches->get_result();
+// # Mock Coaches and Fares (since we don't have a coaches collection yet, or it was embedded)
+// In a real app, you might query $db->coaches->find(['train_code' => ...])
+$trainDetails['coaches'] = [
+    'KA' => ['type' => 'AC_B', 'seats' => 20],
+    'KHA' => ['type' => 'Snigdha', 'seats' => 40],
+    'GA' => ['type' => 'Snigdha', 'seats' => 40],
+    'GHA' => ['type' => 'Shovan', 'seats' => 60],
+    'UMO' => ['type' => 'Shovan', 'seats' => 60]
+];
 
-$trainDetails['coaches'] = [];
-$trainDetails['fare'] = [];
-while ($coach = $resultCoaches->fetch_assoc()) {
-    $trainDetails['coaches'][$coach['coach_name']] = [
-        'type' => $coach['class_type'],
-        'seats' => $coach['total_seats']
-    ];
-    $trainDetails['fare'][$coach['class_type']] = (int)$coach['base_fare'];
-}
+$trainDetails['fare'] = [
+    'AC_B' => $route['fare_ac_b'] ?? 1000,
+    'Snigdha' => $route['fare_snigdha'] ?? 600,
+    'Shovan' => $route['fare_shovan'] ?? 300
+];
 
 
 // # Simple function to generate a seat grid (for visualization)
@@ -217,7 +223,7 @@ function generateSeatGrid($coach, $totalSeats, $classType, $fare) {
             </div>
             
             <div class="text-center mt-4">
-                <a href="booking_summary.php?train_id=<?php echo $trainId; ?>&date=<?php echo $journeyDate; ?>" class="btn btn-lg btn-success disabled" id="proceedToBookingBtn">
+                <a href="booking_summary.php?route_id=<?php echo $routeId; ?>&date=<?php echo $journeyDate; ?>" class="btn btn-lg btn-success disabled" id="proceedToBookingBtn">
                     <i class="fas fa-arrow-right me-2"></i> Proceed to Passenger Details
                 </a>
             </div>
@@ -277,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
             proceedBtn.classList.remove('disabled');
             // # Update URL parameter to pass selected seats for the next step
             const seatQuery = Object.keys(selectedSeats).join(',');
-            proceedBtn.href = `booking_summary.php?train_id=<?php echo $trainId; ?>&date=<?php echo $journeyDate; ?>&seats=${seatQuery}&fare=${totalPayableFare.toFixed(2)}`;
+            proceedBtn.href = `booking_summary.php?route_id=<?php echo $routeId; ?>&date=<?php echo $journeyDate; ?>&seats=${seatQuery}&fare=${totalPayableFare.toFixed(2)}`;
         } else {
             proceedBtn.classList.add('disabled');
             proceedBtn.href = '#';

@@ -1,0 +1,65 @@
+<%- include('../partials/header') %>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-primary text-white p-4">
+                        <h2 class="mb-0"><i class="fas fa-headset me-2"></i> Contact Support</h2>
+                        <p class="mb-0 text-white-50">We are here to help you 24/7</p>
+                    </div>
+                    <div class="card-body p-5">
+
+                        <% if (success) { %>
+                            <div class="alert alert-success d-flex align-items-center" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <div>
+                                    <%= success %>
+                                </div>
+                            </div>
+                            <% } %>
+
+                                <form action="/contact" method="POST">
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <div class="form-outline">
+                                                <label class="form-label fw-bold">Name</label>
+                                                <input type="text" name="name" class="form-control form-control-lg"
+                                                    required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-outline">
+                                                <label class="form-label fw-bold">Email</label>
+                                                <input type="email" name="email" class="form-control form-control-lg"
+                                                    required />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label fw-bold">Subject</label>
+                                        <select class="form-select form-select-lg" name="subject">
+                                            <option>General Inquiry</option>
+                                            <option>Ticket Refund</option>
+                                            <option>Technical Issue</option>
+                                            <option>Complaint</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label fw-bold">Message</label>
+                                        <textarea class="form-control" name="message" rows="5" required></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                                        <i class="fas fa-paper-plane me-2"></i> Send Message
+                                    </button>
+                                </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>

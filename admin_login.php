@@ -7,15 +7,44 @@ include 'includes/header.php';
 
 // Simple placeholder for admin login logic (matches admin@br.gov.bd / admin123 from SQL)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adminLoginId'])) {
+    require_once 'includes/config.php';
+    $loginId = trim($_POST['adminLoginId']);
+    $loginPassword = trim($_POST['adminPassword']);
+
+    $db = getMongoDB();
+    $usersCollection = $db->users;
     
-    // # Simplified login for demonstration (matches admin@br.gov.bd / admin123 from SQL)
-    if ($_POST['adminLoginId'] == 'admin@br.gov.bd' && $_POST['adminPassword'] == 'admin123') {
-        $_SESSION['user_id'] = 2; // Admin ID
-        $_SESSION['user_role'] = 'Super Admin';
-        header("Location: admin_dashboard.php");
-        exit;
+    // Find admin user
+    $user = $usersCollection->findOne([
+        'email' => $loginId,
+        'role' => 'Super Admin' 
+    ]);
+
+    if ($user) {
+         $passwordValid = false;
+        if (password_verify($loginPassword, $user['password'])) {
+            $passwordValid = true;
+        } elseif ($user['password'] === $loginPassword) { 
+             $passwordValid = true;
+        }
+
+        if ($passwordValid) {
+            $_SESSION['user_id'] = (string)$user['_id'];
+            $_SESSION['user_role'] = 'Super Admin';
+            header("Location: admin_dashboard.php");
+            exit;
+        } else {
+             $loginError = "Invalid Admin credentials.";
+        }
     } else {
-        $loginError = "Invalid Admin credentials. Use admin@br.gov.bd / admin123";
+        // Fallback for hardcoded admin if not in DB yet
+        if ($loginId == 'admin@br.gov.bd' && $loginPassword == 'admin123') {
+            $_SESSION['user_id'] = 'admin_legacy'; 
+            $_SESSION['user_role'] = 'Super Admin';
+            header("Location: admin_dashboard.php");
+            exit;
+        }
+        $loginError = "Invalid Admin credentials.";
     }
 }
 ?>

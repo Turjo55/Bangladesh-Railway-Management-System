@@ -1,0 +1,68 @@
+<%- include('partials/header') %>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card p-5 shadow-lg border border-success">
+                    <div class="text-center">
+                        <i class="fas fa-check-circle fa-5x text-success mb-3"></i>
+                        <h1 class="text-success mb-2">Booking Confirmed!</h1>
+                        <p class="lead text-muted">Please save your PNR number.</p>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p class="fw-bold">PNR Number:</p>
+                            <h3 class="text-primary">
+                                <%= booking.pnr %>
+                            </h3>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <p class="fw-bold">Total Paid:</p>
+                            <h3 class="text-success">৳ <%= booking.total_amount %>
+                            </h3>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive mt-4">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Train</th>
+                                <td>
+                                    <%= booking.train_name %> (<%= booking.train_code %>)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Route</th>
+                                <td>
+                                    <%= booking.from_station %> to <%= booking.to_station %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Date</th>
+                                <td>
+                                    <%= booking.journey_date %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Seats</th>
+                                <td><span class="fw-bold">
+                                        <%= booking.seats %>
+                                    </span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary btn-lg me-3" onclick="window.print()"><i
+                                class="fas fa-print me-2"></i> Print</button>
+                        <a href="/booking/my_bookings" class="btn btn-secondary btn-lg">Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

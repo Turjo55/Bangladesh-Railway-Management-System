@@ -1,0 +1,37 @@
+<%- include('../partials/header') %>
+
+    <div class="container my-5">
+        <h1 class="text-center mb-5">Frequently Asked Questions</h1>
+
+        <div class="accordion" id="faqAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-mdb-toggle="collapse"
+                        data-mdb-target="#collapseOne">
+                        How do I book a ticket online?
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" data-mdb-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <strong>It's easy!</strong> Just create an account, search for your route on the home page,
+                        select your seats, and pay online.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-mdb-toggle="collapse"
+                        data-mdb-target="#collapseTwo">
+                        Can I get a refund?
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-mdb-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Yes, refunds are processed within 7 working days if initiated 24 hours before departure.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>

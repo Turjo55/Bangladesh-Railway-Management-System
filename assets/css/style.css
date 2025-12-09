@@ -3,9 +3,12 @@
 
 /* Background Color: A professional, non-distracting light blue/grey */
 :root {
-    --primary-color: #2c3e50; /* Dark Blue for professional look */
-    --secondary-color: #f1c40f; /* Yellow/Gold accent for Bangladesh Railway feel */
-    --background-color: #ecf0f1; /* Light Grey background for cleanliness */
+    --primary-color: #2c3e50;
+    /* Dark Blue for professional look */
+    --secondary-color: #f1c40f;
+    /* Yellow/Gold accent for Bangladesh Railway feel */
+    --background-color: #ecf0f1;
+    /* Light Grey background for cleanliness */
     --card-background: #ffffff;
     --text-color: #34495e;
 }
@@ -21,14 +24,15 @@
 body {
     background-color: var(--background-color);
     color: var(--text-color);
-    font-family: 'Roboto', sans-serif; 
+    font-family: 'Roboto', sans-serif;
     transition: background-color 0.3s, color 0.3s;
 }
 
 /* # Logo Watermark / Branding on all pages */
 body::after {
     content: "";
-    background-image: url('../img/logo_placeholder.png'); /* # REPLACE THIS WITH YOUR BANGLADESH RAILWAY LOGO IMAGE */
+    background-image: url('../img/logo_placeholder.png');
+    /* # REPLACE THIS WITH YOUR BANGLADESH RAILWAY LOGO IMAGE */
     background-repeat: no-repeat;
     background-position: bottom right;
     background-size: 150px;
@@ -38,7 +42,7 @@ body::after {
     right: 10px;
     width: 150px;
     height: 150px;
-    z-index: -1; 
+    z-index: -1;
 }
 
 /* Customizing MDB/Bootstrap components for Material look */
@@ -46,17 +50,20 @@ body::after {
     background-color: var(--primary-color) !important;
     box-shadow: 0 4px 6px -6px #222;
 }
+
 .btn-primary {
     background-color: var(--primary-color) !important;
     border-color: var(--primary-color) !important;
     transition: all 0.3s;
 }
+
 .card {
     background-color: var(--card-background);
     border: none;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease-in-out;
 }
+
 .search-form-container {
     background-color: var(--card-background);
     padding: 2rem;
@@ -67,14 +74,54 @@ body::after {
 /* Admin Dashboard Styling - Background Image */
 .admin-dashboard-bg {
     /* # REPLACE THE URL WITH YOUR DESIRED BANGLADESH RAILWAY ENGINE/COACH IMAGE */
-    background: url('../img/engine_bg.jpg') no-repeat center center fixed; 
+    background: url('../img/engine_bg.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
 }
+
 .admin-card-overlay {
-    background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent white for readability */
+    background-color: rgba(255, 255, 255, 0.95);
+    /* Semi-transparent white for readability */
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     min-height: calc(100vh - 40px);
+}
+
+/* Fix for MDB Dropdown visibility */
+.dropdown-menu {
+    border-radius: 8px;
+    /* Rounded corners */
+    margin-top: 10px;
+    /* Space from button */
+    padding: 0.5rem 0;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    /* Soft shadow */
+    z-index: 99999 !important;
+    /* Ensure it's on top */
+    background-color: var(--card-background) !important;
+}
+
+.dropdown-item {
+    font-size: 0.95rem;
+    padding: 0.7rem 1.5rem;
+    color: var(--text-color) !important;
+    font-weight: 500;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+    color: var(--primary-color) !important;
+    background-image: none !important;
+}
+
+/* Dropdown Divider visibility */
+.dropdown-divider {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .dropdown-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }

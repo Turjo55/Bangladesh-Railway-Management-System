@@ -3,18 +3,26 @@
 session_start();
 
 // Database Connection Constants
-define('DB_SERVER', 'localhost'); // Usually 'localhost' for XAMPP
-define('DB_USERNAME', 'root');    // Default XAMPP username is 'root'
-define('DB_PASSWORD', '');        // Default XAMPP password is empty (no password)
-define('DB_NAME', 'railway_db_bd'); // Ensure this EXACTLY matches your database name
+// Database Connection Constants
+// define('DB_SERVER', 'localhost'); // usually 'localhost'
+// define('DB_USERNAME', 'root');
+// define('DB_PASSWORD', ''); 
+// define('DB_NAME', 'railway_db_bd');
 
 // Attempt to connect to MySQL database
-$conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
+// $conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
-// Check connection
-if ($conn === false) {
-    // If the connection fails, stop the script and print an error message
-    die("ERROR: Could not connect. " . mysqli_connect_error());
+// if ($conn === false) {
+//     die("ERROR: Could not connect. " . mysqli_connect_error());
+// }
+
+// Include MongoDB & Cloudinary Config
+require_once 'db_mongo.php';
+
+// Helper function to get MongoDB Database instance
+function getMongoDB() {
+    global $db;
+    return $db;
 }
 
 // --- Global Functions and Variables ---
