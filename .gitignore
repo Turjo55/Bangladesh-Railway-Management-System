@@ -1,0 +1,9 @@
+node_modules/
+vendor/
+.env
+project_codebase_for_chatgpt.txt
+generate_context.js
+.vs/
+.vscode/
+tmp/
+*.log

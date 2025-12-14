@@ -32,7 +32,6 @@ router.get('/dashboard', protectAdmin, async (req, res) => {
                 bookings: totalBookings,
                 trains: totalTrains,
                 revenue: totalRevenue[0] ? totalRevenue[0].total : 0,
-                live_users: liveUsersCount
             },
             recentBookings
         });
